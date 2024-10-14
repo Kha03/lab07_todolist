@@ -121,7 +121,7 @@ export default function Todo() {
   return (
     <View style={styles.container}>
       <View style={styles.navigate}>
-        <Pressable style={styles.button}>
+        <Pressable>
           <Image source={require("../assets/icons/arrow_back.svg")} />
         </Pressable>
         <View style={styles.info}>
