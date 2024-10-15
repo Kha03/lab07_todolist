@@ -95,7 +95,7 @@ export default function Add({ route, navigation }) {
       </View>
       <View style={{ marginTop: 50, alignSelf: "center" }}>
         <Pressable style={styles.button} onPress={handleAdd}>
-          <Text style={styles.text_button}>GET STARTED {"->"}</Text>
+          <Text style={styles.text_button}>FINISH {"->"}</Text>
         </Pressable>
       </View>
       <View style={styles.logo}>
