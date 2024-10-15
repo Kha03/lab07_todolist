@@ -8,13 +8,49 @@ import {
   View,
 } from "react-native";
 
-export default function Add() {
+export default function Add({ route, navigation }) {
+  const { id = null, todo = "" } = route?.params || {};
+  const [title, setTitle] = useState(todo ? todo : "");
   const [isFocused, setIsFocused] = useState(false);
-
+  const handleCreate = async () => {
+    try {
+      await fetch(`https://670b3789ac6860a6c2cb6c69.mockapi.io/todos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: title, state: false }),
+      });
+      navigation.navigate("Todo");
+    } catch (error) {
+      console.error("Error create todo:", error);
+    }
+  };
+  const handleUpdate = async () => {
+    try {
+      await fetch(`https://670b3789ac6860a6c2cb6c69.mockapi.io/todos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: title, state: false }),
+      });
+      navigation.navigate("Todo");
+    } catch (error) {
+      console.error("Error update todo:", error);
+    }
+  };
+  const handleAdd = () => {
+    title ? (id ? handleUpdate() : handleCreate()) : null;
+  };
   return (
     <View style={styles.container}>
       <View style={styles.navigate}>
-        <Pressable>
+        <Pressable
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
           <Image source={require("../assets/icons/arrow_back.svg")} />
         </Pressable>
         <View style={styles.info}>
@@ -48,15 +84,17 @@ export default function Add() {
           <Image source={require("../assets/icons/document_icon.svg")} />
           <TextInput
             style={styles.input}
+            value={title ? title : ""}
             placeholder="input your job"
             placeholderTextColor={"#BCC1CA"}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            onChangeText={(text) => setTitle(text)}
           />
         </View>
       </View>
       <View style={{ marginTop: 50, alignSelf: "center" }}>
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={handleAdd}>
           <Text style={styles.text_button}>GET STARTED {"->"}</Text>
         </Pressable>
       </View>

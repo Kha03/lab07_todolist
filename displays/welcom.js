@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 
-export default function Welcome() {
+export default function Welcome({ navigation }) {
   const [isFocused, setIsFocused] = useState(false);
   return (
     <View style={styles.container}>
@@ -41,7 +41,12 @@ export default function Welcome() {
         </View>
       </View>
       <View style={{ marginTop: 80, alignSelf: "center" }}>
-        <Pressable style={styles.button}>
+        <Pressable
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate("Todo");
+          }}
+        >
           <Text style={styles.text_button}>GET STARTED {"->"}</Text>
         </Pressable>
       </View>

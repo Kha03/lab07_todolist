@@ -1,3 +1,4 @@
+import { useIsFocused } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import {
   FlatList,
@@ -7,6 +8,7 @@ import {
   Text,
   TextInput,
   View,
+  ActivityIndicator,
 } from "react-native";
 
 const Item = ({ data, onToggle, onDelete, onUpdate }) => {
@@ -36,10 +38,18 @@ const Item = ({ data, onToggle, onDelete, onUpdate }) => {
   );
 };
 
-export default function Todo() {
+export default function Todo({ navigation }) {
+  const [loading, setLoading] = useState(true);
   const [todos, setTodos] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filteredTodos, setFilteredTodos] = useState([]);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchTodos();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     fetchTodos();
@@ -53,6 +63,7 @@ export default function Todo() {
       const json = await response.json();
       setTodos(json);
       setFilteredTodos(json);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching todos:", error);
     }
@@ -93,8 +104,8 @@ export default function Todo() {
   };
 
   const handleUpdate = (id) => {
-    // Handle the logic to update the todo item
-    console.log("Update todo with id:", id);
+    const todo = todos.find((t) => t.id === id);
+    navigation.navigate("Edit", { id: id, todo: todo.title });
   };
 
   const handleSearch = (text) => {
@@ -121,7 +132,7 @@ export default function Todo() {
   return (
     <View style={styles.container}>
       <View style={styles.navigate}>
-        <Pressable>
+        <Pressable onPress={() => navigation.goBack()}>
           <Image source={require("../assets/icons/arrow_back.svg")} />
         </Pressable>
         <View style={styles.info}>
@@ -153,14 +164,21 @@ export default function Todo() {
       </View>
 
       <View style={styles.todos}>
-        <FlatList
-          data={filteredTodos}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
+        {loading ? (
+          <ActivityIndicator size="large" color="#8353E2" />
+        ) : (
+          <FlatList
+            data={filteredTodos}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          />
+        )}
       </View>
       <View style={styles.add}>
-        <Pressable style={styles.button_add}>
+        <Pressable
+          style={styles.button_add}
+          onPress={() => navigation.navigate("Edit")}
+        >
           <Image source={require("../assets/icons/add.svg")} />
         </Pressable>
       </View>
